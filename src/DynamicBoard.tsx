@@ -27,7 +27,7 @@ const BoardComponent = () => {
     );
   };
 
-  // 【新規追加】コンポーネントを追加する関数
+  // コンポーネントを追加する関数
   const addComponent = () => {
     const newComponent = {
       id: nextId,
@@ -36,7 +36,7 @@ const BoardComponent = () => {
         x: Math.random() * 300,  // ランダムな位置に配置
         y: Math.random() * 200 
       },
-      zIndex: nextId  // IDをzIndexとして使用（簡単のため）
+      zIndex: nextId
     };
     
     setComponents(prev => [...prev, newComponent]);
@@ -45,12 +45,11 @@ const BoardComponent = () => {
 
   return (
     <>
-      {/* 【新規追加】追加ボタン */}
       <div style={{ 
         position: 'fixed', 
         top: '10px', 
         left: '10px', 
-        zIndex: 1000  // 他の要素より前面に
+        zIndex: 1000
       }}>
         <button 
           onClick={addComponent}

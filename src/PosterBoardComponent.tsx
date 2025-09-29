@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Rnd } from 'react-rnd';
+import { Tag } from "@chakra-ui/react";
 
 type PosterInfo = {
   post_time: string;
@@ -160,6 +161,9 @@ const PosterBoardComponent = () => {
               <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '4px' }}>{component.name}</div>
               <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>{component.postTime}</div>
               <div style={{ fontSize: '11px', color: '#888' }}>{component.tags.join(', ')}</div>
+              <Tag.Root>
+                <Tag.Label>タグ</Tag.Label>
+              </Tag.Root>
             </div>
           </div>
         </Rnd>

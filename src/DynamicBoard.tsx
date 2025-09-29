@@ -19,7 +19,7 @@ const BoardComponent = () => {
 
   const [nextId, setNextId] = useState(3);
 
-  const updateComponent = (id, updates) => {
+  const updateComponent = (id: number, updates: Partial<PosterComponent>) => {
     setComponents(prev => 
       prev.map(comp => 
         comp.id === id ? { ...comp, ...updates } : comp

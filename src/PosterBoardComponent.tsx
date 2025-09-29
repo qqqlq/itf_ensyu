@@ -28,6 +28,8 @@ const PosterBoardComponent = () => {
   const [nextId, setNextId] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [allTags, setAllTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchPosterInfo = async () => {
@@ -68,6 +70,13 @@ const PosterBoardComponent = () => {
 
         setComponents(posterComponents);
         setNextId(posterComponents.length + 1);
+        
+        // 全てのタグを収集（重複なし）
+        const tagsSet = new Set<string>();
+        posterComponents.forEach(component => {
+          component.tags.forEach(tag => tagsSet.add(tag));
+        });
+        setAllTags(Array.from(tagsSet).sort());
       } catch (err: unknown) {
         console.error('Error fetching poster info:', err);
         setError(err instanceof Error ? err.message : 'Unknown error');
@@ -103,6 +112,27 @@ const PosterBoardComponent = () => {
     setNextId((prev) => prev + 1);
   };
 
+  const removeTag = (tag: string) => {
+    setAllTags(prev => prev.filter(t => t !== tag));
+    setSelectedTags(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(tag);
+      return newSet;
+    });
+  };
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(tag)) {
+        newSet.delete(tag);
+      } else {
+        newSet.add(tag);
+      }
+      return newSet;
+    });
+  };
+
   const getPosterImageUrl = (name: string) =>
     `https://raspberrypi-1.tail8fca5.ts.net/poster/${name}`;
 
@@ -124,6 +154,38 @@ const PosterBoardComponent = () => {
 
   return (
     <>
+      {/* タグフィルター */}
+      <div style={{
+        position: 'fixed',
+        top: '10px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 1000,
+        backgroundColor: 'white',
+        padding: '10px 20px',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+        maxWidth: '80%',
+        display: 'flex',
+        gap: '8px',
+        flexWrap: 'wrap',
+        alignItems: 'center'
+      }}>
+        <span style={{ fontSize: '14px', fontWeight: 'bold', marginRight: '10px' }}>
+          Tags:
+        </span>
+        {allTags.map((tag) => (
+          <Tag.Root
+            key={tag}
+            size="md"
+            colorPalette={selectedTags.has(tag) ? 'blue' : 'gray'}
+            style={{ cursor: 'pointer' }}
+          >
+            <Tag.Label onClick={() => toggleTag(tag)}>{tag}</Tag.Label>
+            <Tag.CloseTrigger onClick={() => removeTag(tag)} />
+          </Tag.Root>
+        ))}
+      </div>
+
       <div style={{ position: 'fixed', top: '10px', left: '10px', zIndex: 1000, backgroundColor: 'white', padding: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
         <button
           onClick={addComponent}
@@ -134,7 +196,12 @@ const PosterBoardComponent = () => {
         <div style={{ marginTop: '5px', fontSize: '12px' }}>現在の数: {components.length}</div>
       </div>
 
-      {components.map((component) => (
+      {components
+        .filter(component => {
+          if (selectedTags.size === 0) return true;
+          return component.tags.some(tag => selectedTags.has(tag));
+        })
+        .map((component) => (
         <Rnd
           key={component.id}
           size={{ width: component.size.width, height: component.size.height }}
@@ -160,11 +227,6 @@ const PosterBoardComponent = () => {
             <div style={{ padding: '8px', backgroundColor: 'rgba(255,255,255,0.95)', borderTop: '1px solid #eee' }}>
               <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '4px' }}>{component.name}</div>
               <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>{component.postTime}</div>
-              <div style={{ fontSize: '11px', color: '#888' }}>{component.tags.join(', ')}</div>
-              <Tag.Root>
-                <Tag.Label>タグ</Tag.Label>
-              </Tag.Root>
-
               <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                 {component.tags.map((tag, index) => (
                   <Tag.Root key={index}>
@@ -172,7 +234,6 @@ const PosterBoardComponent = () => {
                   </Tag.Root>
                 ))}
               </div>
-
             </div>
           </div>
         </Rnd>
@@ -182,4 +243,3 @@ const PosterBoardComponent = () => {
 };
 
 export default PosterBoardComponent;
-

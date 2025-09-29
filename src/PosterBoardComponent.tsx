@@ -164,6 +164,15 @@ const PosterBoardComponent = () => {
               <Tag.Root>
                 <Tag.Label>タグ</Tag.Label>
               </Tag.Root>
+
+              <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                {component.tags.map((tag, index) => (
+                  <Tag.Root key={index}>
+                    <Tag.Label>{tag}</Tag.Label>
+                  </Tag.Root>
+                ))}
+              </div>
+
             </div>
           </div>
         </Rnd>

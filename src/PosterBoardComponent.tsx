@@ -25,7 +25,7 @@ type PosterComponent = {
 
 const PosterBoardComponent = () => {
   const [components, setComponents] = useState<PosterComponent[]>([]);
-  const [nextId, setNextId] = useState(1);
+  // const [nextId, setNextId] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [allTags, setAllTags] = useState<string[]>([]);
@@ -79,7 +79,7 @@ const PosterBoardComponent = () => {
         );
 
         setComponents(posterComponents);
-        setNextId(posterComponents.length + 1);
+        // setNextId(posterComponents.length + 1);
 
         const tagsSet = new Set<string>();
         posterComponents.forEach(c =>
